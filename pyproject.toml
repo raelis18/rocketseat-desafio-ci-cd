@@ -1,5 +1,5 @@
 [tool.semantic_release]
-version_variable = "hello_py.py:__version__"
+version = "hello_py.py:__version__"
 branch = "main"
 upload_to_pypi = false
 build_command = "python setup.py sdist bdist_wheel"
