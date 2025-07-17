@@ -1,0 +1,35 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql:9.0
+    container_name: mysql
+    volumes:
+      - db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+       - MYSQL_ROOT_PASSWORD=root
+       - MYSQL_DATABASE=app_flask
+       - MYSQL_USER=app_flask
+       - MYSQL_PASSWORD=app_flask
+    networks:
+      - app_network
+
+  app_flask:
+    build:
+      context: .
+    container_name: app_flask
+    image: app_flask:v1
+    ports:
+      - 5000:5000
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  db:
