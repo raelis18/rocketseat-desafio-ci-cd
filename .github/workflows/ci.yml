@@ -25,13 +25,21 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }} 
           cache: 'pip'
-      - run: pip install -r requirements.txt
-      - run: python hello_py.py
 
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v4
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run hello_py.py
+        run: python hello_py.py
+
+      - name: Install Python Semantic Release
+        run: pip install python-semantic-release
+
+      - name: Run Python Semantic Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          semantic-release publish
 
       - name: Generate Tag
         id: generate_tag
@@ -49,7 +57,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-    
       - name: Build and push Docker image
         id: build-and-push-docker-image
         env:
@@ -61,7 +68,6 @@ jobs:
           docker push $REGISTRY/rocketseat-ci-app --all-tags
           IMAGE=$(echo $REGISTRY/rocketseat-ci-app:$TAG)
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
-      #    docker push rael18/rocketseat-ci-api:lates
 
       - name: Deploy to App Runner
         id: deploy-apprunner
@@ -78,14 +84,13 @@ jobs:
 
       - name: App Runner check
         run: |
-          echo "App Runner runnig...${{steps.deploy-apprunner.outputs.service_url}}"
-          
+          echo "App Runner running...${{steps.deploy-apprunner.outputs.service_url}}"
 
 
 
 
-    
 
-  
 
-      
+
+
+
