@@ -36,7 +36,7 @@ resource "aws_s3_bucket" "terraform-app-flask-state-dev" {
 }
 
 resource "aws_s3_bucket_versioning" "terraform-app-flask-state-dev" {
-  bucket = aws_s3_bucket.terraform-app-flask-state-prod.id
+  bucket = aws_s3_bucket.terraform-app-flask-state-dev.id
   versioning_configuration {
     status = "Enabled"
   }
