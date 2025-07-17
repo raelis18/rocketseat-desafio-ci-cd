@@ -12,7 +12,7 @@ COPY --from=build /usr/src/app/ ./
 COPY --from=build /usr/local/lib/ /usr/local/lib/
 COPY --from=build /usr/local/bin/ /usr/local/bin/
 EXPOSE 5000
-CMD ["flask", "--app","check_db","run", "--host=0.0.0.0"]
+CMD ["flask", "--app","Hello_py","run", "--host=0.0.0.0"]
 
 
 
