@@ -1,4 +1,4 @@
-__version__ = importlib.metadata.version(__name__)
+__version__ = "1.0.0"
 
 from flask import Flask
 import json
