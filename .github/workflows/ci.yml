@@ -1,0 +1,91 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.10]
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }} 
+          cache: 'pip'
+      - run: pip install - r requirements.txt
+      - run: python hello.py
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: Generate Tag
+        id: generate_tag
+        run: |
+          SHA=$(echo $GITHUB_SHA | head -c7)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+     
+      - name: Aws Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: us-east-2
+          role-to-assume: 'arn:aws:iam::796973514485:role/ecr-role'
+        
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+    
+      - name: Build and push Docker image
+        id: build-and-push-docker-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ steps.generate_tag.outputs.sha }}
+        run: |
+          docker build -t $REGISTRY/rocketseat-ci-app:$TAG .
+          docker tag $REGISTRY/rocketseat-ci-app:$TAG $REGISTRY/rocketseat-ci-app:latest
+          docker push $REGISTRY/rocketseat-ci-app --all-tags
+          IMAGE=$(echo $REGISTRY/rocketseat-ci-app:$TAG)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+      #    docker push rael18/rocketseat-ci-api:lates
+
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: 'rocketseat-ci-app'
+          image: ${{ steps.build-and-push-docker-image.outputs.image }}
+          access-role-arn: 'arn:aws:iam::796973514485:role/app-runner-role'
+          region: 'us-east-2'
+          cpu: '1 vCPU'
+          memory: '2 GB'
+          port: '3000'
+          wait-for-service-stability-seconds: 180
+
+      - name: App Runner check
+        run: |
+          echo "App Runner runnig...${{steps.deploy-apprunner.outputs.service_url}}"
+          
+
+
+
+
+    
+
+  
+
+      
