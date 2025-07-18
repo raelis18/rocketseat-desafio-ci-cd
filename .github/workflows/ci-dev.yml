@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - dev
-  
+      
   workflow_run:
     workflows: ["CI-IAC-DEV"]
     types:

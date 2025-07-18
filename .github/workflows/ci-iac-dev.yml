@@ -32,7 +32,9 @@ jobs:
         terraform_version: 1.8.4
 
     - name: run terraform init
-      run: terraform init
+      run: |
+        cd IAC/dev
+        terraform init
 
     - name: run terraform format
       run: terraform fmt -check
