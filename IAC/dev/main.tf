@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "app-terraform-state-dev"
-    key     = "state/terraform.tfstate"
-    region  = "us-east-2"
+    bucket = "app-terraform-state-dev"
+    key    = "state/terraform.tfstate"
+    region = "us-east-2"
     # encrypt = true
     # profile = "Administrador"
   }
