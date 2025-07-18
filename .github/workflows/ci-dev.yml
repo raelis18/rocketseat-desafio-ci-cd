@@ -2,7 +2,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - dev
 permissions:
   id-token: write
   contents: write
@@ -60,8 +60,8 @@ jobs:
       - name: Aws Credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
-          aws-region: us-east-2
-          role-to-assume: 'arn:aws:iam::796973514485:role/ecr-role'
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.ARN_ECR_ROLE }}
         
       - name: Login to Amazon ECR
         id: login-ecr
@@ -85,8 +85,8 @@ jobs:
         with:
           service: 'rocketseat-ci-app'
           image: ${{ steps.build-and-push-docker-image.outputs.image }}
-          access-role-arn: 'arn:aws:iam::796973514485:role/app-runner-role'
-          region: 'us-east-2'
+          access-role-arn: ${{ secrets.ARN_APP_RUNNER_ROLE }}
+          region: ${{ secrets.AWS_REGION }}
           cpu: '1 vCPU'
           memory: '2 GB'
           port: '5000'
