@@ -5,7 +5,8 @@ resource "aws_iam_openid_connect_provider" "oidc-git" {
     "sts.amazonaws.com"
   ]
 
-  thumbprint_list = ["2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"]
+
+  thumbprint_list = [${{secrets.TOKEN_THUMBPRINT}}]
 
 
   tags = {
