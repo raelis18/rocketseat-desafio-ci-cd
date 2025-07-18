@@ -33,6 +33,7 @@ jobs:
 
     - name: run terraform init
       run: |
+        ls 
         cd IAC/dev
         terraform init
 
