@@ -77,7 +77,7 @@ jobs:
           docker tag $REGISTRY/rocketseat-ci-app-dev:$TAG $REGISTRY/rocketseat-ci-app-dev:latest
           docker push $REGISTRY/rocketseat-ci-app-dev --all-tags
           IMAGE=$(echo $REGISTRY/rocketseat-ci-app-dev:$TAG)
-          echo "image=$IMAGE" >> $GITHUB_OUTPUT"
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
       - name: Deploy to App Runner
         id: deploy-apprunner
