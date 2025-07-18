@@ -1,0 +1,112 @@
+name: CI-PROD
+on:
+  pull_request:
+    branches:
+      - main
+      
+  workflow_run:
+    workflows: ["CI-IAC-PROD"]
+    types:
+      - completed
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }} 
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run hello_py.py
+        run: python hello_py.py
+
+      # - name: Install Python Semantic Release
+      #   run: pip install python-semantic-release
+
+      # - name: Action | Semantic Version Release
+      #   id: release
+      #   # Adjust tag with desired version if applicable.
+      #   uses: python-semantic-release/python-semantic-release@v10.2.0
+      #   with:
+      #     github_token: ${{ secrets.GH_TOKEN }}
+      #     git_committer_name: "github-actions"
+      #     git_committer_email: "actions@users.noreply.github.com"
+
+      # - name: Publish | Upload to GitHub Release Assets
+      #   uses: python-semantic-release/publish-action@v10.2.0
+      #   if: steps.release.outputs.released == 'true'
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ steps.release.outputs.tag }}
+
+      - name: Generate Tag
+        id: generate_tag
+        run: |
+          SHA=$(echo $GITHUB_SHA | head -c7)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+     
+      - name: Aws Credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.ARN_ECR_ROLE }}
+        
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        id: build-and-push-docker-image
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ steps.generate_tag.outputs.sha }}
+        run: |
+          docker build -t $REGISTRY/rocketseat-ci-app-prod:$TAG .
+          docker tag $REGISTRY/rocketseat-ci-app-prod:$TAG $REGISTRY/rocketseat-ci-app-prod:latest
+          docker push $REGISTRY/rocketseat-ci-app-prod --all-tags
+          IMAGE=$(echo $REGISTRY/rocketseat-ci-app-prod:$TAG)
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main
+        with:
+          service: 'rocketseat-ci-app-prod'
+          image: ${{ steps.build-and-push-docker-image.outputs.image }}
+          access-role-arn: ${{ secrets.ARN_APP_RUNNER_ROLE }}
+          region: ${{ secrets.AWS_REGION }}
+          cpu: '1 vCPU'
+          memory: '2 GB'
+          port: '5000'
+          wait-for-service-stability-seconds: 180
+
+      - name: App Runner check
+        run: |
+          echo "App Runner running...${{steps.deploy-apprunner.outputs.service_url}}"
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+name: CI-IAC-PROD
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+
+jobs:
+
+  run-terraform:
+    name: Run Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::796973514485:role/tf-role
+        aws-region: us-east-2
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.8.4
+
+    - name: run terraform init
+      run: |
+        cd IAC/prod
+        terraform init
+
+    - name: run terraform format
+      run: |
+        cd IAC/prod
+        terraform fmt -check
+
+    - name: run terraform plan
+      run: |
+        cd IAC/prod
+        terraform plan
+
+    - name: run terraform apply
+      run: |
+        cd IAC/prod
+        terraform apply -auto-approve
