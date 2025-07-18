@@ -1,8 +1,8 @@
 FROM python:3.13-alpine AS build
 WORKDIR /usr/src/app
 
-COPY ./requirements/.requirements.txt  .
-RUN pip install --no-cache-dir -r ./.requirements.txt
+COPY requirements.txt  .
+RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
