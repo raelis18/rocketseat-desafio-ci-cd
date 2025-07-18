@@ -73,10 +73,10 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           TAG: ${{ steps.generate_tag.outputs.sha }}
         run: |
-          docker build -t $REGISTRY/rocketseat-ci-app:$TAG .
-          docker tag $REGISTRY/rocketseat-ci-app:$TAG $REGISTRY/rocketseat-ci-app:latest
-          docker push $REGISTRY/rocketseat-ci-app --all-tags
-          IMAGE=$(echo $REGISTRY/rocketseat-ci-app:$TAG)
+          docker build -t $REGISTRY/rocketseat-ci-app-dev":$TAG .
+          docker tag $REGISTRY/rocketseat-ci-app-dev":$TAG $REGISTRY/rocketseat-ci-app-dev:latest
+          docker push $REGISTRY/rocketseat-ci-app-dev --all-tags
+          IMAGE=$(echo $REGISTRY/rocketseat-ci-app-dev:$TAG)
           echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
       - name: Deploy to App Runner

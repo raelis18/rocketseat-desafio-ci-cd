@@ -52,7 +52,7 @@ resource "aws_iam_role" "tf_role" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:raelis18/rocketseat-ci-iam:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:raelis18/rocketseat-desafio-ci-cd:ref:refs/heads/main"
         }
       }
       Effect = "Allow",
@@ -77,7 +77,7 @@ resource "aws_iam_role" "ecr_role" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:raelis18/rocketseat.ci-cd:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:raelis18/rocketseat-desafio-ci-cd:ref:refs/heads/main"
         }
       }
       Effect = "Allow",
