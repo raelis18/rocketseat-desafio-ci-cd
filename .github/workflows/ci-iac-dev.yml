@@ -3,7 +3,7 @@ name: CI-IAC-DEV
 on:
   push:
     branches:
-      - main
+      - dev
 
 permissions:
   contents: write
