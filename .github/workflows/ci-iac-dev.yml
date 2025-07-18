@@ -1,0 +1,44 @@
+name: CI-IAC-DEV
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+
+jobs:
+
+  run-terraform:
+    name: Run Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::796973514485:role/tf-role
+        aws-region: us-east-2
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.8.4
+
+    - name: run terraform init
+      run: terraform init
+
+    - name: run terraform format
+      run: terraform fmt -check
+
+    - name: run terraform plan
+      run: terraform plan
+
+    - name: run terraform apply
+      run: terraform apply -auto-approve
