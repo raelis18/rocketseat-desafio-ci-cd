@@ -1,4 +1,4 @@
-variable ecr_name {
+variable "ecr_name" {
   type    = string
   default = "rocketseat-ci-app-dev"
 }

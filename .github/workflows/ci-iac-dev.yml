@@ -33,15 +33,20 @@ jobs:
 
     - name: run terraform init
       run: |
-        ls 
         cd IAC/dev
         terraform init
 
     - name: run terraform format
-      run: terraform fmt -check
+      run: |
+        cd IAC/dev
+        terraform fmt -check
 
     - name: run terraform plan
-      run: terraform plan
+      run: |
+        cd IAC/dev
+        terraform plan
 
     - name: run terraform apply
-      run: terraform apply -auto-approve
+      run: |
+        cd IAC/dev
+        terraform apply -auto-approve

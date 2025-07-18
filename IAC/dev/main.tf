@@ -6,19 +6,19 @@ terraform {
     }
   }
 
-  # backend "s3" {
-  #   bucket  = "terraform-app-flask-state-dev"
-  #   key     = "state/terraform.tfstate"
-  #   region  = "us-east-2"
-  #   encrypt = true
-  #   profile = "Administrador"
-  # }
+  backend "s3" {
+    bucket  = "app-terraform-state-dev"
+    key     = "state/terraform.tfstate"
+    region  = "us-east-2"
+    # encrypt = true
+    # profile = "Administrador"
+  }
 
 }
 
 provider "aws" {
-  profile = "Administrador"
-  region  = "us-east-2"
+  #profile = "Administrador"
+  region = "us-east-2"
 }
 
 resource "aws_s3_bucket" "terraform-app-flask-state-dev" {
@@ -43,11 +43,11 @@ resource "aws_s3_bucket_versioning" "terraform-app-flask-state-dev" {
 }
 
 module "iam" {
-  source = "../modules/iam" 
+  source = "../modules/iam"
 
 }
 module "ecr" {
-  source = "../modules/ecr"
+  source   = "../modules/ecr"
   ecr_name = var.ecr_name
 }
 
