@@ -5,6 +5,9 @@ resource "aws_ecr_repository" "rocketseat-ci-app" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  force_delete = true
+
   tags = {
     IAC = "true"
   }

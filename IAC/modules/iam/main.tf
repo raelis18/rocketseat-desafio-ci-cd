@@ -6,8 +6,7 @@ resource "aws_iam_openid_connect_provider" "oidc-git" {
   ]
 
 
-  thumbprint_list = [${{secrets.TOKEN_THUMBPRINT}}]
-
+  thumbprint_list = ["2b18947a6a9fc7764fd8b5fb18a863b0c6dac24f"]
 
   tags = {
     "IAC" : "TRUE"

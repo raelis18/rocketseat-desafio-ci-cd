@@ -10,15 +10,15 @@ terraform {
     bucket = "app-terraform-state-dev"
     key    = "state/terraform.tfstate"
     region = "us-east-2"
-    # encrypt = true
-    # profile = "Administrador"
+    encrypt = true
+    profile = "Administrador"
   }
 
 }
 
 provider "aws" {
   #profile = "Administrador"
-  region = "us-east-2"
+  region  = "us-east-2"
 }
 
 resource "aws_s3_bucket" "terraform-app-flask-state-dev" {
