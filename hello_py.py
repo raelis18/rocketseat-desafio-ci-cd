@@ -8,7 +8,7 @@ import json
 app = Flask(__name__)
 
 @app.route("/")
-def Hello_py():
+def hello_py():
     
     mensagem = "Hello, meu app Flask Python!" 
 
